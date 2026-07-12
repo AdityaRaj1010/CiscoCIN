@@ -1,0 +1,8 @@
+# CIN — Next.js app
+node_modules/
+.next/
+.env*
+powershell.cmd
+powershell.bat
+scratch/
+
