@@ -6,12 +6,16 @@ import { NextResponse, type NextRequest } from "next/server";
  * The host-based branch is the same file if we ever buy a domain.
  */
 export function middleware(req: NextRequest) {
-  const host = req.headers.get("host") ?? "";
-  const sub = host.split(":")[0].split(".")[0];
+  const host = (req.headers.get("host") ?? "").toLowerCase();
+  const hostname = host.split(":")[0];
+  const sub = hostname.split(".")[0];
+  const isLocalhost = ["localhost", "127.0.0.1", "0.0.0.0"].includes(hostname);
+  const isVercelHost = hostname === "vercel.app" || hostname.endsWith(".vercel.app");
   const isSubdomainTenant =
-    !host.startsWith("localhost") &&
+    !isLocalhost &&
+    !isVercelHost &&
     !["www", "cin", "vercel"].includes(sub) &&
-    host.split(".").length > 2;
+    hostname.split(".").length > 2;
 
   if (isSubdomainTenant && !req.nextUrl.pathname.startsWith("/t/")) {
     return NextResponse.rewrite(
